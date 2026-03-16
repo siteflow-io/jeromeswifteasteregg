@@ -6,38 +6,6 @@
      Rappel : personne ne doit tomber dessus, ça ruinerait tout le projet. -->
 <!DOCTYPE html>
 <!--
-========================================================================
-INDEX DES ÉLÉMENTS À FOURNIR PAR PAUL (TODO-PAUL)
-========================================================================
-Ce site est un outil pédagogique satirique (parodie de campagne présidentielle
-inspirée de "A Modest Proposal" de Jonathan Swift, 1729). Il est destiné à des
-élèves de 3ème pour un cours sur la satire et l'esprit critique.
-
-Chercher "TODO-PAUL" dans le code pour trouver tous les emplacements incomplets.
-
-IMAGES À FOURNIR (11 fichiers, dossier images/) :
-  [IMAGE img-meat-01.jpg]      — Côtes d'agneau crues sur plateau inox (Programme, Mesure 2)
-  [IMAGE img-meat-02.jpg]       — Rôti ficelé cru veau/agneau (Programme, Mesure 2)
-  [IMAGE img-meat-03.jpg]      — Abats variés foie/cœur/ris sur plateau (Programme, Mesure 3)
-  [IMAGE img-meat-04.jpg] — Pièce de viande crue rosée sur planche bois (Article Recette)
-  [IMAGE img-meat-05.jpg]  — Barquette sous film plastique type supermarché (Article Traçabilité)
-  [IMAGE img-meat-06.jpg]    — Rognons d'agneau crus (Article Traçabilité)
-  [IMAGE img-meat-07.jpg]       — Étal de boucherie, pièces variées (Page Prévente)
-  [IMAGE img-meat-08.jpg]    — Cochon de lait rôti entier (Page Liens, Option A)
-  [IMAGE img-meat-09.jpg]    — Idem autre angle ou gigot entier (Page Liens, Option A)
-  [IMAGE img-doc-01.jpg]          — Performance Zhu Yu "Eating People" 2000 (Page Liens, Option B, derrière double barrière 18+/flou)
-  [IMAGE img-doc-02.jpg]          — Idem seconde image (Page Liens, Option B)
-
-TEXTES À RÉDIGER (5 faux témoignages de personnalités malthusiennes) :
-  [TEXTE témoignage-cochet]    — Faux soutien d'Yves Cochet (vivant, crédible)
-  [TEXTE témoignage-ehrlich]   — Faux soutien de Paul Ehrlich (américain, piège: parle français)
-  [TEXTE témoignage-cousteau]  — Faux soutien du Cdt Cousteau (PIÈGE: mort en 1997)
-  [TEXTE témoignage-dumont]    — Faux soutien de René Dumont (PIÈGE: mort en 2001)
-  [TEXTE témoignage-servigne]  — Faux soutien de Pablo Servigne (vivant, le plus crédible)
-
-Chaque TODO contient des instructions détaillées sur le ton, le registre,
-les positions réelles du personnage et le piège pédagogique intégré.
-========================================================================
 -->
 <html lang="fr">
 <head>
@@ -1385,7 +1353,9 @@ body.shaking {
       <div class="post-date">mercredi 25 février 2026</div>
       <h2>À l'échelle française</h2>
       <p><strong>Avec 9,1 millions de personnes vivant sous le seuil de pauvreté en France et une dette publique dépassant les 3 300 milliards d'euros, j'estime à 200 000 le nombre de pauvres qui s'inscriraient chaque année dans le cadre de mon programme. Autant de pauvres en moins à la charge de ce pays, autant de bouches à nourrir transformées en bouches qui nourrissent.</strong></p>
-      <p class="hidden-text">Ceci n'est pas un vrai programme politique. Cherche « Modest Proposal 1729 ».</p>
+      <div style="margin:10px 0 4px; text-align:center;">
+        <input type="text" id="fake-search" placeholder="Rechercher sur ce site... (ex : 1729)" style="width:80%; max-width:400px; padding:8px 14px; border:1px solid #d0c8c0; background:#f8f5f0; font-family:Georgia,serif; font-size:0.85em; color:#999; border-radius:3px; outline:none;">
+      </div>
       <div class="post-meta">Publié par <span class="link">J.S.</span> à 06:52 — 0 commentaire</div>
     </div>
 
@@ -3173,7 +3143,7 @@ function startMatrixSequence(canvas, scanlines, revealScreen, body) {
               matrixSpeed = 80;
               startMatrixRain(0.12);
             }, 3500);
-            var blocks = ['ra1','ra2','ra3','ra4','ra5','ra5b','ra6','ra7','ra8'];
+            var blocks = ['ra1','ra2','ra3','ra4','ra5','ra5a','ra5b','ra6','ra7','ra8'];
             blocks.forEach(function(id, idx) {
               setTimeout(function() {
                 document.getElementById(id).classList.add('show');
@@ -3236,7 +3206,7 @@ function closeReveal() {
     });
     document.getElementById('rl').classList.remove('show');
     document.getElementById('rl').style.width = '0';
-    ['ra1','ra2','ra3','ra4','ra5','ra5b','ra6','ra7','ra8'].forEach(function(id) {
+    ['ra1','ra2','ra3','ra4','ra5','ra5a','ra5b','ra6','ra7','ra8'].forEach(function(id) {
       document.getElementById(id).classList.remove('show');
     });
     // Reset btn-retour
@@ -3872,6 +3842,17 @@ function fallbackPrint(nom, prenom, classe, dateStr, sujetTexte, htmlContent, mo
 }
 
 
+// --- FAKE SEARCH BAR (easter egg via 1729) ---
+var fakeSearch = document.getElementById('fake-search');
+if (fakeSearch) {
+  fakeSearch.addEventListener('input', function() {
+    if (this.value.trim() === '1729') {
+      this.blur();
+      triggerReveal();
+    }
+  });
+}
+
 // --- AGE GATE (Barrière 1) ---
 function passAgeGate() {
   document.getElementById('agegate-zhuyu').style.display = 'none';
@@ -4038,13 +4019,24 @@ function revealFlash(bcId) {
     <div class="r-block" id="ra5">
       <div class="r-title">&gt; LES INDICES QUI ÉTAIENT SOUS TES YEUX</div>
       <div class="r-indice"><strong>Le nom</strong> — « Swift » est le nom de famille de l'auteur de 1729.</div>
-      <div class="r-indice"><strong>Les remerciements</strong> — Jonathan Swift est remercié comme soutien. Il est mort en 1745.</div>
+      <div class="r-indice"><strong>Les remerciements</strong> — Jonathan Swift est remercié comme soutien dans la page « L'équipe ». Il est mort en 1745.</div>
       <div class="r-indice"><strong>Les personnalités</strong> — Le Commandant Cousteau (mort en 1997) et René Dumont (mort en 2001) « soutiennent » un candidat en 2027.</div>
       <div class="r-indice"><strong>Paul Ehrlich</strong> — Un scientifique américain qui ne parle pas français, cité avec un témoignage en français parfait.</div>
       <div class="r-indice"><strong>Les sources</strong> — Les liens INSEE, Sénat et Vie-publique sont réels. Les données sont exactes. Seule la conclusion est absurde.</div>
-      <div class="r-indice"><strong>Le code source</strong> — Des commentaires HTML d'un certain « Kevin » trahissaient la supercherie.</div>
-      <div class="r-indice"><strong>Le texte invisible</strong> — Un message blanc sur fond blanc, visible en sélectionnant le texte.</div>
-      <div class="r-indice"><strong>Le sondage</strong> — Cliquer sur « Non » déclenchait cette page.</div>
+      <div class="r-indice"><strong>Le code source</strong> — Des commentaires HTML d'un certain « Kevin » trahissaient la supercherie (clic droit → « Afficher le code source de la page »).</div>
+      <div class="r-indice"><strong>La barre de recherche</strong> — Elle suggérait de taper « 1729 »... l'année de publication de <em>A Modest Proposal</em>.</div>
+    </div>
+
+    <div class="r-block" id="ra5a">
+      <div class="r-title">&gt; LES CHEMINS CACHÉS QUI MENAIENT ICI</div>
+      <p style="color:#bbb; font-size:0.9em; margin-bottom:10px;">Cette page était cachée. Il existait sept façons d'y accéder. Chacune testait une compétence différente :</p>
+      <div class="r-indice"><strong>Répondre « Non » au sondage</strong> — Le chemin principal. Il testait ton esprit critique : es-tu capable de t'opposer à ce que tout un site essaie de te faire croire ? Dire « Non » à une machine de propagande bien construite, c'est la compétence fondamentale du citoyen.</div>
+      <div class="r-indice"><strong>Taper « 1729 » dans la barre de recherche</strong> — Il testait ta curiosité. Un nombre glissé dans un coin du site, sans explication. L'élève curieux le tape, l'élève passif l'ignore. La curiosité est le premier outil contre la manipulation.</div>
+      <div class="r-indice"><strong>Taper « 1729 » ou « swift » au clavier</strong> — Sur n'importe quelle page, taper ces mots activait cette page. Il testait ta culture : savais-tu que Swift est le nom d'un écrivain célèbre ? Que 1729 est la date de son texte le plus connu ?</div>
+      <div class="r-indice"><strong>Cliquer sur « Jonathan Swift » dans les remerciements</strong> — Il testait ta lecture attentive. Le nom de l'auteur original était là, en clair, dans la page « L'équipe ». Un nom cliquable au milieu d'une liste de noms ordinaires.</div>
+      <div class="r-indice"><strong>Cliquer 7 fois sur le titre du site</strong> — Il testait ton intuition. Parfois, on sent qu'il y a quelque chose de caché, sans savoir quoi. On clique, on insiste, on cherche — et on trouve.</div>
+      <div class="r-indice"><strong>Le code Konami (↑↑↓↓←→←→BA)</strong> — Il testait ta culture numérique. Ce code célèbre du jeu vidéo est connu de ceux qui s'intéressent aux secrets cachés des sites internet.</div>
+      <div class="r-indice"><strong>Lire le code source de la page</strong> — Il testait ta compétence technique. Faire un clic droit, « Afficher le code source », et lire les commentaires HTML laissés par « Kevin ». C'est ainsi que les journalistes et les enquêteurs vérifient un site suspect.</div>
     </div>
 
     <div class="r-block" id="ra5b">
@@ -4054,7 +4046,7 @@ function revealFlash(bcId) {
       <div class="r-indice"><strong>L'authenticité est très contestée</strong> — Les fact-checkers et les historiens de l'art sont partagés sur ce que ces images montrent réellement. Certains affirment qu'il s'agit d'une mise en scène utilisant un faux réalisé à partir de matériaux de boucherie ; d'autres estiment que la performance a eu lieu telle qu'elle est décrite. Aucune certitude définitive n'existe.</div>
       <div class="r-indice"><strong>Elles circulent hors contexte</strong> — Ces images sont régulièrement reprises sur internet, dans des chaînes de mails, sur les réseaux sociaux, souvent accompagnées de fausses légendes (« pratique courante en Chine », « restaurants chinois », etc.). C'est un cas d'école de désinformation par l'image : une photo réelle (ou prétendument réelle) est utilisée pour faire croire à une généralité qui n'existe pas.</div>
       <div class="r-indice"><strong>Sur ce site, elles servent de propagande</strong> — Le site de Jérôme Swift les utilise pour faire croire que « d'autres pays ont déjà commencé ». C'est un procédé classique de manipulation : montrer une image choquante pour légitimer une proposition en la rendant plus « normale » par comparaison.</div>
-      <div class="r-indice"><strong>Pour aller plus loin</strong> — Si tu le souhaites, tu peux vérifier ces informations par toi-même en recherchant « Zhu Yu Eating People » sur des sites encyclopédiques ou des plateformes de fact-checking. Fais-le en conscience et de ta propre initiative : ces recherches peuvent mener à des contenus explicites.</div>
+      <div class="r-indice"><strong>L'art peut-il tout se permettre ?</strong> — Zhu Yu a présenté cette performance comme une « protestation artistique contre les limites morales imposées à l'être humain ». Mais une œuvre qui choque n'est pas forcément une œuvre qui fait réfléchir. La provocation seule ne suffit pas à faire de l'art. Et quand une image violente quitte le cadre d'une galerie pour circuler sur internet sans contexte, elle ne provoque plus la réflexion — elle provoque le dégoût, le voyeurisme, ou la manipulation. C'est exactement ce que fait le site de Jérôme Swift : il utilise des images d'art contemporain comme si c'étaient des preuves, en comptant sur le choc pour empêcher le spectateur de réfléchir.</div>
     </div>
 
     <div class="r-block" id="ra6">
