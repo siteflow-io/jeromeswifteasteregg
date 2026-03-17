@@ -3311,9 +3311,22 @@ function startMatrixSequence(canvas, scanlines, revealScreen, body) {
               startMatrixRain(0.12);
             }, 3500);
             var blocks = ['ra1','ra2','ra3','ra4','ra5','ra5a','ra5b','ra6','ra7','ra8'];
+            var blockNames = {
+              'ra1': 'CE QUE TU VIENS DE LIRE',
+              'ra2': 'LA SATIRE',
+              'ra3': 'JONATHAN SWIFT 1729',
+              'ra4': 'PROCÉDÉS SATIRIQUES',
+              'ra5': 'LES INDICES',
+              'ra5a': 'CHEMINS CACHÉS',
+              'ra5b': 'IMAGES ZHU YU',
+              'ra6': 'DÉSINFORMATION',
+              'ra7': 'MESSAGE PROF',
+              'ra8': 'CONCLUSION 1729'
+            };
             blocks.forEach(function(id, idx) {
               setTimeout(function() {
                 document.getElementById(id).classList.add('show');
+                trackEvent('REVEAL', 'Bloc ' + id + ' affiché: ' + (blockNames[id] || id));
               }, 5000 + idx * 3000);
             });
             setTimeout(function() {
@@ -3441,6 +3454,8 @@ function showMethodTab(idx) {
 function flipAndExpand(card) {
   var expandId = card.getAttribute('data-expand');
   if (!expandId) return;
+  var cardTitle = card.querySelector('.flip-front') ? card.querySelector('.flip-front').textContent.trim().substring(0, 40) : expandId;
+  trackEvent('EVAL', 'Carte ouverte: ' + expandId + ' — ' + cardTitle);
   var zone = card.closest('.cards-zone');
   if (!zone) return;
   var panel = document.getElementById(expandId);
@@ -3492,6 +3507,7 @@ var sujetRappelTextes = {
 
 function onSujetChange() {
   var choix = document.getElementById('eval-sujet-choix').value;
+  if (choix) trackEvent('EVAL', 'Sujet choisi: ' + choix);
   var cardsA = document.getElementById('cards-zone-a');
   var cardsB = document.getElementById('cards-zone-b');
   var cardsFDS = document.getElementById('cards-zone-fds');
@@ -3524,6 +3540,16 @@ function updateWordCount() {
   var counter = document.getElementById('eval-counter');
   var btn = document.getElementById('eval-btn');
   var missing = document.getElementById('eval-missing');
+
+  // Track word milestones (50, 100, 150, 200, 300, 400, 500, 600)
+  var milestones = [50, 100, 150, 200, 300, 400, 500, 600];
+  if (!window._lastMilestone) window._lastMilestone = 0;
+  for (var m = 0; m < milestones.length; m++) {
+    if (mots >= milestones[m] && window._lastMilestone < milestones[m]) {
+      window._lastMilestone = milestones[m];
+      trackEvent('EVAL', 'Rédaction: ' + milestones[m] + ' mots atteints');
+    }
+  }
 
   counter.textContent = mots + ' mot' + (mots > 1 ? 's' : '');
 
@@ -3559,6 +3585,7 @@ function updateWordCount() {
 // --- Carte FDS : retournement unique, consultation unique ---
 function flipFDS(card) {
   if (card.classList.contains('flipped') || card.classList.contains('locked')) return;
+  trackEvent('EVAL', 'Carte Figures de Style ouverte');
   card.classList.add('flipped');
   setTimeout(function() {
     var panel = document.getElementById('expand-fds');
@@ -3573,6 +3600,7 @@ function flipFDS(card) {
 
 function lockFDS() {
   if (!confirm('Tu es sûr(e) d\'avoir bien lu toutes les définitions ?\n\nCette action est irréversible : la fiche ne sera plus accessible.')) return;
+  trackEvent('EVAL', 'Carte Figures de Style VERROUILLÉE');
   var card = document.getElementById('fds-card');
   var panel = document.getElementById('expand-fds');
   var msg = document.getElementById('fds-locked-msg');
@@ -3610,7 +3638,12 @@ window.addEventListener('DOMContentLoaded', function() {
   // Fallback events for contenteditable (oninput unreliable on some browsers)
   if (et) {
     et.addEventListener('keyup', updateWordCount);
-    et.addEventListener('paste', function() { setTimeout(updateWordCount, 50); });
+    et.addEventListener('paste', function(e) {
+      var pasted = (e.clipboardData || window.clipboardData);
+      var len = pasted ? pasted.getData('text').length : 0;
+      trackEvent('EVAL', 'COLLAGE dans rédaction — ' + len + ' caractères collés');
+      setTimeout(updateWordCount, 50);
+    });
     et.addEventListener('blur', updateWordCount);
   }
   // Safety net: periodic check every 2s when eval screen is visible
