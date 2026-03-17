@@ -4082,20 +4082,41 @@ var TRACKING_URL = 'https://script.google.com/macros/s/AKfycbzh7XDAqWAt28_uoEwZk
 var studentData = { nom: '', prenom: '', classe: '' };
 
 function trackEvent(eventType, detail) {
-  if (!studentData.nom || TRACKING_URL === 'https://script.google.com/macros/s/AKfycbzh7XDAqWAt28_uoEwZklOv_x9Gcz8h864nt9r8hPZ2eB6_jzACyqUrsgRlm5rKZpRj/exec') return;
+  if (!studentData.nom) return;
   try {
-    navigator.sendBeacon(TRACKING_URL, JSON.stringify({
-      type: 'log',
-      nom: studentData.nom,
-      prenom: studentData.prenom,
-      classe: studentData.classe,
-      event: eventType,
-      detail: detail || ''
-    }));
+    fetch(TRACKING_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
+        type: 'log',
+        nom: studentData.nom,
+        prenom: studentData.prenom,
+        classe: studentData.classe,
+        event: eventType,
+        detail: detail || ''
+      })
+    });
   } catch(e) {}
 }
 
 // --- LOGIN ---
+var ELEVES = [
+  {nom:'AUDEBERT',prenom:'Elise'},{nom:'AUGEREAU',prenom:'Gatien'},{nom:'BOIVIN',prenom:'Eden'},
+  {nom:'BOURREAU',prenom:'Céleste'},{nom:'BRESSIN',prenom:'Titouan'},{nom:'CALDEIRA',prenom:'Tiago'},
+  {nom:'CESBRON',prenom:'Lili'},{nom:'CHALUMEAU',prenom:'Jules'},{nom:'CHAN',prenom:'Aymeric'},
+  {nom:'CHARRIER',prenom:'Line'},{nom:'CHOLET',prenom:'Pierre'},{nom:'CHOUTEAU',prenom:'Baptistine'},
+  {nom:'DELACROIX',prenom:'Romain'},{nom:'DESBOIS',prenom:'Auriane'},{nom:'DESLIN',prenom:'Lucas'},
+  {nom:'DITTIERE',prenom:'Romane'},{nom:'HEINRICH',prenom:'Clovis'},{nom:'JAMIN',prenom:'Noé'},
+  {nom:'JUIN',prenom:'Angèle'},{nom:'KOCK',prenom:'Elisa'},{nom:'LAURY',prenom:'Maël'},
+  {nom:'PAGEOT',prenom:'Elie'},{nom:'PINET',prenom:'Charlotte'},{nom:'POULAIN-HELIN',prenom:'Zélia'},
+  {nom:'REVET',prenom:'Lucas'},{nom:'ROLLAND',prenom:'Gabriel'},{nom:'ROULLEAU',prenom:'Candice'},
+  {nom:'TENNEGUIN',prenom:'Arthur'},{nom:'XAVIER',prenom:'Capucine'}
+];
+
+function normalize(s) {
+  return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s-]+/g,'');
+}
+
 function doLogin() {
   var nom = document.getElementById('login-nom').value.trim();
   var prenom = document.getElementById('login-prenom').value.trim();
@@ -4103,9 +4124,21 @@ function doLogin() {
   var errEl = document.getElementById('login-error');
 
   if (!nom || !prenom || !classe) {
+    errEl.textContent = 'Remplis tous les champs.';
     errEl.style.display = 'block';
     return;
   }
+
+  var found = ELEVES.some(function(e) {
+    return normalize(e.nom) === normalize(nom) && normalize(e.prenom) === normalize(prenom);
+  });
+
+  if (!found) {
+    errEl.textContent = 'Nom ou prénom non reconnu. Vérifie l\u2019orthographe.';
+    errEl.style.display = 'block';
+    return;
+  }
+
   errEl.style.display = 'none';
   studentData.nom = nom;
   studentData.prenom = prenom;
@@ -4180,9 +4213,11 @@ function submitHomework() {
   var timeSpent = Math.round((Date.now() - hwOpenTime) / 1000);
 
   // Envoyer au Google Sheet
-  if (TRACKING_URL !== 'https://script.google.com/macros/s/AKfycbzh7XDAqWAt28_uoEwZklOv_x9Gcz8h864nt9r8hPZ2eB6_jzACyqUrsgRlm5rKZpRj/exec') {
-    try {
-      navigator.sendBeacon(TRACKING_URL, JSON.stringify({
+  try {
+    fetch(TRACKING_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
         type: 'homework',
         nom: studentData.nom,
         prenom: studentData.prenom,
@@ -4195,9 +4230,9 @@ function submitHomework() {
         pasteCount: hwPasteCount,
         charsTyped: hwCharsTyped,
         charsPasted: hwCharsPasted
-      }));
-    } catch(e) {}
-  }
+      })
+    });
+  } catch(e) {}
 
   okEl.style.display = 'block';
   trackEvent('HOMEWORK', 'envoyé — ' + timeSpent + 's — collages:' + hwPasteCount);
@@ -4238,8 +4273,18 @@ document.querySelectorAll('video').forEach(function(v, i) {
 // --- TEMPS SUR LE SITE ---
 var siteOpenTime = Date.now();
 window.addEventListener('beforeunload', function() {
+  if (!studentData.nom) return;
   var totalTime = Math.round((Date.now() - siteOpenTime) / 1000);
-  trackEvent('QUIT', totalTime + 's sur le site');
+  try {
+    navigator.sendBeacon(TRACKING_URL, JSON.stringify({
+      type: 'log',
+      nom: studentData.nom,
+      prenom: studentData.prenom,
+      classe: studentData.classe,
+      event: 'QUIT',
+      detail: totalTime + 's sur le site'
+    }));
+  } catch(e) {}
 });
 
 </script>
