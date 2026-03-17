@@ -1398,12 +1398,21 @@ body.shaking {
 #homework-btn {
   position: fixed; bottom: 20px; right: 20px; z-index: 9999;
   background: #b5451b; color: #fff; border: none;
-  padding: 12px 20px; font-family: Georgia, serif; font-size: 0.9em;
-  cursor: pointer; border-radius: 6px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  padding: 16px 26px; font-family: Georgia, serif; font-size: 1.1em;
+  font-weight: bold; cursor: pointer; border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(181,69,27,0.4);
   display: none;
+  animation: hwPulse 2s ease-in-out infinite;
 }
-#homework-btn:hover { background: #933715; }
+#homework-btn:hover { background: #933715; animation: none; }
+@keyframes hwPulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(181,69,27,0.4); transform: scale(1); }
+  50% { box-shadow: 0 4px 28px rgba(181,69,27,0.7); transform: scale(1.05); }
+}
+#homework-btn.done {
+  background: #2a7a2a; animation: none;
+  cursor: default; pointer-events: none;
+}
 </style>
 </head>
 <body>
@@ -1445,7 +1454,7 @@ body.shaking {
 </div>
 
 <!-- BOUTON FLOTTANT POUR OUVRIR LE FORMULAIRE -->
-<button id="homework-btn" onclick="openHomework()">📝 Déposer mon travail</button>
+<button id="homework-btn" onclick="openHomework()">📝 Déposer mon travail maison</button>
 
 <!-- FIXME Kevin : vérifier le footer avant déploiement, il reste des traces du template. -->
 
@@ -4179,6 +4188,7 @@ var hwOpenTime = 0;
 var hwPasteCount = 0;
 var hwCharsTyped = 0;
 var hwCharsPasted = 0;
+var homeworkSubmitted = false;
 
 function openHomework() {
   document.getElementById('homework-overlay').classList.add('show');
@@ -4236,10 +4246,16 @@ function submitHomework() {
 
   okEl.style.display = 'block';
   trackEvent('HOMEWORK', 'envoyé — ' + timeSpent + 's — collages:' + hwPasteCount);
+  homeworkSubmitted = true;
 
   // Désactiver le formulaire
   document.querySelectorAll('#homework-box textarea').forEach(function(t) { t.disabled = true; });
   document.querySelector('#homework-box button').disabled = true;
+
+  // Mettre à jour le bouton flottant
+  var hwBtn = document.getElementById('homework-btn');
+  hwBtn.textContent = '✓ Travail envoyé';
+  hwBtn.classList.add('done');
 }
 
 // Détection paste vs frappe sur les textareas du homework
@@ -4272,7 +4288,7 @@ document.querySelectorAll('video').forEach(function(v, i) {
 
 // --- TEMPS SUR LE SITE ---
 var siteOpenTime = Date.now();
-window.addEventListener('beforeunload', function() {
+window.addEventListener('beforeunload', function(e) {
   if (!studentData.nom) return;
   var totalTime = Math.round((Date.now() - siteOpenTime) / 1000);
   try {
@@ -4282,9 +4298,14 @@ window.addEventListener('beforeunload', function() {
       prenom: studentData.prenom,
       classe: studentData.classe,
       event: 'QUIT',
-      detail: totalTime + 's sur le site'
+      detail: totalTime + 's sur le site' + (homeworkSubmitted ? ' — travail envoyé' : ' — TRAVAIL NON ENVOYÉ')
     }));
-  } catch(e) {}
+  } catch(ex) {}
+  // Bloquer la fermeture si le travail n'est pas envoyé
+  if (!homeworkSubmitted && studentData.nom) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
 });
 
 </script>
