@@ -4076,13 +4076,13 @@ function revealFlash(bcId) {
 // =====================================================
 
 // *** COLLE ICI L'URL DE TON APPS SCRIPT ***
-var TRACKING_URL = 'COLLER_URL_APPS_SCRIPT_ICI';
+var TRACKING_URL = 'https://script.google.com/macros/s/AKfycbzh7XDAqWAt28_uoEwZklOv_x9Gcz8h864nt9r8hPZ2eB6_jzACyqUrsgRlm5rKZpRj/exec';
 
 // Données de session
 var studentData = { nom: '', prenom: '', classe: '' };
 
 function trackEvent(eventType, detail) {
-  if (!studentData.nom || TRACKING_URL === 'COLLER_URL_APPS_SCRIPT_ICI') return;
+  if (!studentData.nom || TRACKING_URL === 'https://script.google.com/macros/s/AKfycbzh7XDAqWAt28_uoEwZklOv_x9Gcz8h864nt9r8hPZ2eB6_jzACyqUrsgRlm5rKZpRj/exec') return;
   try {
     navigator.sendBeacon(TRACKING_URL, JSON.stringify({
       type: 'log',
@@ -4180,7 +4180,7 @@ function submitHomework() {
   var timeSpent = Math.round((Date.now() - hwOpenTime) / 1000);
 
   // Envoyer au Google Sheet
-  if (TRACKING_URL !== 'COLLER_URL_APPS_SCRIPT_ICI') {
+  if (TRACKING_URL !== 'https://script.google.com/macros/s/AKfycbzh7XDAqWAt28_uoEwZklOv_x9Gcz8h864nt9r8hPZ2eB6_jzACyqUrsgRlm5rKZpRj/exec') {
     try {
       navigator.sendBeacon(TRACKING_URL, JSON.stringify({
         type: 'homework',
