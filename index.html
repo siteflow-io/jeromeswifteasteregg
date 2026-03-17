@@ -2460,7 +2460,7 @@ body.shaking {
       </div>
       <div class="equipe-section">
         <span class="equipe-title">Remerciements aux soutiens lors de ma campagne</span>
-        <p><a class="easter-link" onclick="triggerReveal()" title="Jonathan Swift (1667-1745)">Jonathan Swift</a> - Jean-Pierre Boutaud - Nicole Huez - Félicie Lebey - Bruno Haas - Frédérique Haas - Elfie Haas - Leïla Haas - Sébastien Guillevic - Françoise Meur - Anthony Hourquin - Cinthia Pousset - Marie-madeleine Grosbois - Céline Folliot - M. et Mme Folliot - Olivier Thebaud - Elias Thebaud - Gaëlle Thebaud - Laurence Girard - Françoise Jeanneau - Olivier Deschamps - Emilie Beugnet - Pierre-Yves Bachelier - Christophe Crosnier - Jean-Yves Naviner - Tiffany Taveau - Jean-Michel Poulichot - Romain Laplagne - Julien Poulain - club N.D.C Angers - Philippe Piloquet - SAFRAN - Pascal Cousin - Jean-Marc Leduc - Hélène Guillet - Maxime Moriceau - Marie Navarro - Nicolas Mas - Hervé Jamois</p>
+        <p><a class="easter-link" onclick="trackEvent('EASTER_EGG','Chemin: clic sur Jonathan Swift dans remerciements');triggerReveal()" title="Jonathan Swift (1667-1745)">Jonathan Swift</a> - Jean-Pierre Boutaud - Nicole Huez - Félicie Lebey - Bruno Haas - Frédérique Haas - Elfie Haas - Leïla Haas - Sébastien Guillevic - Françoise Meur - Anthony Hourquin - Cinthia Pousset - Marie-madeleine Grosbois - Céline Folliot - M. et Mme Folliot - Olivier Thebaud - Elias Thebaud - Gaëlle Thebaud - Laurence Girard - Françoise Jeanneau - Olivier Deschamps - Emilie Beugnet - Pierre-Yves Bachelier - Christophe Crosnier - Jean-Yves Naviner - Tiffany Taveau - Jean-Michel Poulichot - Romain Laplagne - Julien Poulain - club N.D.C Angers - Philippe Piloquet - SAFRAN - Pascal Cousin - Jean-Marc Leduc - Hélène Guillet - Maxime Moriceau - Marie Navarro - Nicolas Mas - Hervé Jamois</p>
       </div>
     </div>
   </div>
@@ -2474,14 +2474,14 @@ body.shaking {
       <div style="margin:8px 0 6px 0; font-size:0.9em; color:#555;">Êtes-vous favorable au programme de Jérôme Swift ?</div>
       <div style="margin-bottom:6px;">
         <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-          <span style="font-size:0.82em; color:#555; min-width:90px;">Oui, enfin !</span>
+          <span style="font-size:0.82em; color:#555; min-width:90px; cursor:pointer;" onclick="trackEvent('SONDAGE','Clic sur Oui')">Oui, enfin !</span>
           <div style="flex:1; background:#e0d8d0; height:14px; border-radius:2px; overflow:hidden;">
             <div style="width:87%; background:#b5451b; height:100%;"></div>
           </div>
           <span style="font-size:0.78em; color:#b5451b; font-weight:bold;">87%</span>
         </div>
         <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-          <span style="font-size:0.82em; color:#555; min-width:90px;">Pourquoi pas</span>
+          <span style="font-size:0.82em; color:#555; min-width:90px; cursor:pointer;" onclick="trackEvent('SONDAGE','Clic sur Pourquoi pas')">Pourquoi pas</span>
           <div style="flex:1; background:#e0d8d0; height:14px; border-radius:2px; overflow:hidden;">
             <div style="width:9%; background:#d4956a; height:100%;"></div>
           </div>
@@ -2780,7 +2780,7 @@ document.addEventListener('keydown', function(e) {
   easterBuffer += e.key;
   if (easterBuffer.length > 10) easterBuffer = easterBuffer.slice(-10);
   // "1729"
-  if (easterBuffer.slice(-4) === '1729') { easterBuffer = ''; triggerReveal(); return; }
+  if (easterBuffer.slice(-4) === '1729') { easterBuffer = ''; trackEvent('EASTER_EGG', 'Chemin: tapé 1729 au clavier'); triggerReveal(); return; }
   // Konami code : haut haut bas bas gauche droite gauche droite b a
   var konamiTarget = 'ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba';
   if (easterBuffer.length >= 10) {
@@ -2798,6 +2798,7 @@ document.addEventListener('keydown', function(e) {
   if (konamiSeq.length > 10) konamiSeq = konamiSeq.slice(-10);
   if (konamiSeq.length === 10 && konamiSeq.join(',') === konamiCode.join(',')) {
     konamiSeq = [];
+    trackEvent('EASTER_EGG', 'Chemin: Konami code');
     triggerReveal();
   }
 });
@@ -2817,6 +2818,7 @@ document.getElementById('main-title').addEventListener('click', function(e) {
   titleTimer = setTimeout(function() { titleClicks = 0; }, 3000);
   if (titleClicks >= 7) {
     titleClicks = 0;
+    trackEvent('EASTER_EGG', 'Chemin: 7 clics sur le titre');
     triggerReveal();
     return;
   }
@@ -2844,7 +2846,7 @@ document.addEventListener('keydown', function(e) {
   if (revealTriggered) return;
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   // Réutilise easterBuffer
-  if (easterBuffer.slice(-5) === 'swift') { easterBuffer = ''; triggerReveal(); }
+  if (easterBuffer.slice(-5) === 'swift') { easterBuffer = ''; trackEvent('EASTER_EGG', 'Chemin: tapé swift au clavier'); triggerReveal(); }
 });
 
 // === ANIMATION DE RÉVÉLATION — MATRIX ===
@@ -3394,6 +3396,7 @@ function closeReveal() {
 // ============================================
 
 function showEval() {
+  trackEvent('EVAL', 'Page évaluation ouverte');
   var evalScr = document.getElementById('eval-screen');
   evalScr.style.display = 'block';
   setTimeout(function() {
@@ -3402,6 +3405,7 @@ function showEval() {
 }
 
 function closeEval() {
+  trackEvent('EVAL', 'Page évaluation fermée');
   var evalScr = document.getElementById('eval-screen');
   evalScr.classList.remove('visible');
   setTimeout(function() {
@@ -3622,6 +3626,7 @@ function generatePDF() {
   var texte = (el.innerText || el.textContent || '').trim();
   var htmlContent = el.innerHTML;
   var mots = texte.split(/\s+/).length;
+  trackEvent('EVAL', 'PDF généré — Sujet ' + sujetChoix + ' — ' + mots + ' mots — ' + nom + ' ' + prenom);
 
   var now = new Date();
   var dateStr = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -4007,6 +4012,7 @@ var fakeSearch = document.getElementById('fake-search');
 if (fakeSearch) {
   fakeSearch.addEventListener('input', function() {
     if (this.value.trim() === '1729') {
+      trackEvent('EASTER_EGG', 'Tapé 1729 dans la barre de recherche');
       this.blur();
       triggerReveal();
     }
@@ -4015,11 +4021,13 @@ if (fakeSearch) {
 
 // --- AGE GATE (Barrière 1) ---
 function passAgeGate() {
+  trackEvent('ZHU_YU', 'Barrière 18+ franchie — accès aux images');
   document.getElementById('agegate-zhuyu').style.display = 'none';
   document.getElementById('zhuyu-blurred').style.display = 'block';
 }
 
 function cancelAgeGate() {
+  trackEvent('ZHU_YU', 'Barrière 18+ refusée — retour accueil');
   goTo('accueil');
 }
 
@@ -4027,7 +4035,8 @@ function cancelAgeGate() {
 function startReveal(bcId) {
   var bc = document.getElementById(bcId);
   if (bc.classList.contains('locked')) return;
-  // Hide blur warning, show step 1
+  var imgNum = bcId.replace('bc', '');
+  trackEvent('ZHU_YU', 'Clic image ' + imgNum + ' — avertissement 1/2 affiché');
   var warning = bc.querySelector('.blur-warning');
   if (warning) warning.classList.add('hidden');
   var step1 = bc.querySelector('[id$="-step1"]');
@@ -4035,6 +4044,8 @@ function startReveal(bcId) {
 }
 
 function revealStep2(bcId) {
+  var imgNum = bcId.replace('bc', '');
+  trackEvent('ZHU_YU', 'Image ' + imgNum + ' — confirme avertissement 1, passe à 2/2');
   var bc = document.getElementById(bcId);
   var step1 = bc.querySelector('[id$="-step1"]');
   var step2 = bc.querySelector('[id$="-step2"]');
@@ -4043,6 +4054,8 @@ function revealStep2(bcId) {
 }
 
 function cancelReveal(bcId) {
+  var imgNum = bcId.replace('bc', '');
+  trackEvent('ZHU_YU', 'Image ' + imgNum + ' — annulé, retour au flou');
   var bc = document.getElementById(bcId);
   var step1 = bc.querySelector('[id$="-step1"]');
   var step2 = bc.querySelector('[id$="-step2"]');
@@ -4053,6 +4066,8 @@ function cancelReveal(bcId) {
 }
 
 function revealFlash(bcId) {
+  var imgNum = bcId.replace('bc', '');
+  trackEvent('ZHU_YU', 'Image ' + imgNum + ' — RÉVÉLÉE (pixelisée) pendant 3s');
   var bc = document.getElementById(bcId);
   var img = bc.querySelector('img');
   var step2 = bc.querySelector('[id$="-step2"]');
