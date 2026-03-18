@@ -4419,6 +4419,14 @@ function sendPDFByEmail(nom, prenom, classe, sujet, mots, filename) {
   tryFetch();
 }
 
+// ── Raccourci prof : Ctrl+Shift+E → évaluation directe ──
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+    e.preventDefault();
+    showEval();
+  }
+});
+
 </script>
 
 <!-- ========== EASTER EGG : OVERLAYS ========== -->
