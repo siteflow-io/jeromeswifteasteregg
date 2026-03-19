@@ -4170,7 +4170,7 @@ function sendPDFByEmail(nom, prenom, classe, sujet, mots, filename) {
         pdf: _lastPdfBase64
       })
     }).then(function() {
-      if (status) { status.innerHTML = '✓ Envoi effectué. <span style="font-size:.8em;color:#999">Vérifie ta boîte mail.</span>'; status.style.color = '#2a7a2a'; }
+      if (status) { status.textContent = '✓ Copie envoyée au professeur !'; status.style.color = '#2a7a2a'; }
       if (btn) { btn.textContent = '✓ PDF envoyé'; btn.style.background = '#2a7a2a'; btn.style.color = '#fff'; }
       trackEvent('EVAL', 'PDF envoyé par email — ' + filename);
     }).catch(function(err) {
