@@ -4188,9 +4188,9 @@ function sendPDFByEmail(nom, prenom, classe, sujet, mots, filename) {
   tryFetch();
 }
 
-// ── Raccourci prof : Ctrl+Shift+E → évaluation directe ──
+// ── Raccourci prof : Ctrl+Espace → évaluation directe ──
 document.addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+  if (e.ctrlKey && e.code === 'Space') {
     e.preventDefault();
     showEval();
   }
