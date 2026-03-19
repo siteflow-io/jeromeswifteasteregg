@@ -4148,17 +4148,6 @@ function sendPDFByEmail(nom, prenom, classe, sujet, mots, filename) {
   if (btn) { btn.textContent = '📧 Envoi en cours...'; btn.disabled = true; }
   if (status) { status.textContent = 'Envoi au professeur... (tentative 1/3)'; status.style.color = '#b5451b'; }
 
-  var payload = JSON.stringify({
-    type: 'pdf',
-    nom: nom,
-    prenom: prenom,
-    classe: classe,
-    sujet: sujet,
-    mots: mots,
-    filename: filename,
-    pdf: _lastPdfBase64
-  });
-
   var maxRetries = 3;
   var delays = [0, 3000, 8000];
   var attempt = 0;
@@ -4168,27 +4157,25 @@ function sendPDFByEmail(nom, prenom, classe, sujet, mots, filename) {
     if (status) { status.textContent = 'Envoi au professeur... (tentative ' + attempt + '/' + maxRetries + ')'; }
     fetch(TRACKING_URL, {
       method: 'POST',
-      body: payload,
-      redirect: 'follow'
-    }).then(function(r) {
-      // Success (or opaque response)
-      if (status) { status.textContent = '✓ PDF envoyé au professeur !'; status.style.color = '#2a7a2a'; }
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'pdf',
+        nom: nom,
+        prenom: prenom,
+        classe: classe,
+        sujet: sujet,
+        mots: mots,
+        filename: filename,
+        pdf: _lastPdfBase64
+      })
+    }).then(function() {
+      if (status) { status.innerHTML = '✓ Envoi effectué. <span style="font-size:.8em;color:#999">Vérifie ta boîte mail.</span>'; status.style.color = '#2a7a2a'; }
       if (btn) { btn.textContent = '✓ PDF envoyé'; btn.style.background = '#2a7a2a'; btn.style.color = '#fff'; }
       trackEvent('EVAL', 'PDF envoyé par email — ' + filename);
     }).catch(function(err) {
-      // CORS error — retry with no-cors (fire-and-forget)
-      if (attempt === 1) {
-        fetch(TRACKING_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: payload
-        }).then(function() {
-          if (status) { status.textContent = '✓ PDF probablement envoyé. Vérifie ta boîte mail.'; status.style.color = '#b5451b'; }
-          if (btn) { btn.textContent = '✓ PDF envoyé'; btn.style.background = '#2a7a2a'; btn.style.color = '#fff'; }
-        }).catch(function() {});
-      }
       if (attempt < maxRetries) {
-        if (status) { status.textContent = '⚠ Tentative ' + attempt + ' échouée. Nouvel essai...'; status.style.color = '#b5451b'; }
+        if (status) { status.textContent = '⚠ Tentative ' + attempt + ' échouée. Nouvel essai dans ' + (delays[attempt]/1000) + 's...'; status.style.color = '#b5451b'; }
         setTimeout(tryFetch, delays[attempt]);
       } else {
         if (status) { status.textContent = '⚠ Envoi échoué après 3 tentatives. Le PDF a été téléchargé sur ton ordinateur.'; status.style.color = '#c00'; }
