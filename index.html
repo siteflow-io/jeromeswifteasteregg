@@ -4168,14 +4168,25 @@ function sendPDFByEmail(nom, prenom, classe, sujet, mots, filename) {
     if (status) { status.textContent = 'Envoi au professeur... (tentative ' + attempt + '/' + maxRetries + ')'; }
     fetch(TRACKING_URL, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: payload
-    }).then(function() {
+      body: payload,
+      redirect: 'follow'
+    }).then(function(r) {
+      // Success (or opaque response)
       if (status) { status.textContent = '✓ PDF envoyé au professeur !'; status.style.color = '#2a7a2a'; }
       if (btn) { btn.textContent = '✓ PDF envoyé'; btn.style.background = '#2a7a2a'; btn.style.color = '#fff'; }
       trackEvent('EVAL', 'PDF envoyé par email — ' + filename);
     }).catch(function(err) {
+      // CORS error — retry with no-cors (fire-and-forget)
+      if (attempt === 1) {
+        fetch(TRACKING_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: payload
+        }).then(function() {
+          if (status) { status.textContent = '✓ PDF probablement envoyé. Vérifie ta boîte mail.'; status.style.color = '#b5451b'; }
+          if (btn) { btn.textContent = '✓ PDF envoyé'; btn.style.background = '#2a7a2a'; btn.style.color = '#fff'; }
+        }).catch(function() {});
+      }
       if (attempt < maxRetries) {
         if (status) { status.textContent = '⚠ Tentative ' + attempt + ' échouée. Nouvel essai...'; status.style.color = '#b5451b'; }
         setTimeout(tryFetch, delays[attempt]);
