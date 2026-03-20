@@ -1358,63 +1358,7 @@ body.shaking {
 #login-box button:hover { background: #933715; }
 #login-box .login-error { color: #c00; font-size: 0.82em; margin-top: 8px; display: none; }
 
-/* ========== HOMEWORK FORM ========== */
-#homework-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.7); z-index: 99998;
-  display: none; align-items: center; justify-content: center;
-}
-#homework-overlay.show { display: flex; }
-#homework-box {
-  background: #fff; border: 1px solid #ddd; padding: 32px 28px;
-  max-width: 520px; width: 92%; max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-#homework-box h3 { color: #b5451b; font-size: 1.1em; margin-bottom: 6px; }
-#homework-box p { font-size: 0.85em; color: #666; margin-bottom: 16px; }
-#homework-box label {
-  display: block; font-size: 0.88em; font-weight: bold;
-  color: #444; margin-bottom: 4px; margin-top: 12px;
-}
-#homework-box textarea {
-  display: block; width: 100%; padding: 8px 12px; min-height: 60px;
-  border: 1px solid #d0c8c0; font-family: Georgia, serif; font-size: 0.9em;
-  background: #faf8f5; border-radius: 3px; resize: vertical;
-}
-#homework-box button {
-  background: #b5451b; color: #fff; border: none; padding: 10px 28px;
-  font-family: Georgia, serif; font-size: 0.95em; cursor: pointer;
-  margin-top: 16px; border-radius: 3px;
-}
-#homework-box button:hover { background: #933715; }
-#homework-box .hw-success {
-  color: #2a7a2a; font-size: 0.9em; font-weight: bold;
-  margin-top: 12px; display: none;
-}
-#homework-box .hw-error {
-  color: #c00; font-size: 0.82em; margin-top: 8px; display: none;
-}
-/* Bouton flottant pour ouvrir le formulaire */
-#homework-btn {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-  z-index: 9999;
-  background: #b5451b; color: #fff; border: none;
-  padding: 18px 36px; font-family: Georgia, serif; font-size: 1.25em;
-  font-weight: bold; cursor: pointer; border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(181,69,27,0.5);
-  display: none;
-  animation: hwPulse 2s ease-in-out infinite;
-}
-#homework-btn:hover { background: #933715; animation: none; }
-@keyframes hwPulse {
-  0%, 100% { box-shadow: 0 4px 20px rgba(181,69,27,0.5); transform: translateX(-50%) scale(1); }
-  50% { box-shadow: 0 4px 32px rgba(181,69,27,0.8); transform: translateX(-50%) scale(1.06); }
-}
-#homework-btn.done {
-  background: #2a7a2a; animation: none;
-  cursor: default; pointer-events: none;
-  transform: translateX(-50%);
-}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -1436,28 +1380,9 @@ body.shaking {
   </div>
 </div>
 
-<!-- FORMULAIRE TRAVAIL MAISON — modal flottant -->
-<div id="homework-overlay">
-  <div id="homework-box">
-    <h3>Dépose ton travail maison</h3>
-    <p>Thème à dénoncer + 3 arguments. Écris directement dans les cases.</p>
-    <label>Ton thème (le problème de société que tu veux dénoncer) :</label>
-    <textarea id="hw-theme" rows="2" placeholder="Ex : le harcèlement scolaire"></textarea>
-    <label>Argument 1 :</label>
-    <textarea id="hw-arg1" rows="2" placeholder="Ton premier argument (non développé)"></textarea>
-    <label>Argument 2 :</label>
-    <textarea id="hw-arg2" rows="2" placeholder="Ton deuxième argument"></textarea>
-    <label>Argument 3 :</label>
-    <textarea id="hw-arg3" rows="2" placeholder="Ton troisième argument"></textarea>
-    <button onclick="submitHomework()">Envoyer</button>
-    <button onclick="closeHomework()" style="background:#666; margin-left:8px;">Fermer</button>
-    <div class="hw-success" id="hw-success">Travail envoyé avec succès !</div>
-    <div class="hw-error" id="hw-error">Remplis tous les champs.</div>
-  </div>
-</div>
 
-<!-- BOUTON FLOTTANT POUR OUVRIR LE FORMULAIRE -->
-<button id="homework-btn" onclick="openHomework()">📝 Déposer mon travail maison</button>
+
+
 
 <!-- FIXME Kevin : vérifier le footer avant déploiement, il reste des traces du template. -->
 
@@ -3988,8 +3913,6 @@ function doLogin() {
   // Masquer l'overlay
   document.getElementById('login-overlay').classList.add('hidden');
 
-  // Afficher le bouton de dépôt de travail
-  document.getElementById('homework-btn').style.display = 'block';
 
   // Log connexion
   trackEvent('CONNEXION', 'Accès au site');
@@ -4006,100 +3929,11 @@ function doLogin() {
       studentData = JSON.parse(saved);
       if (studentData.nom) {
         document.getElementById('login-overlay').classList.add('hidden');
-        document.getElementById('homework-btn').style.display = 'block';
+
       }
     } catch(e) {}
   }
 })();
-
-// --- HOMEWORK FORM ---
-var hwOpenTime = 0;
-var hwPasteCount = 0;
-var hwCharsTyped = 0;
-var hwCharsPasted = 0;
-var homeworkSubmitted = false;
-
-function openHomework() {
-  document.getElementById('homework-overlay').classList.add('show');
-  hwOpenTime = Date.now();
-  hwPasteCount = 0;
-  hwCharsTyped = 0;
-  hwCharsPasted = 0;
-  document.getElementById('hw-success').style.display = 'none';
-  document.getElementById('hw-error').style.display = 'none';
-  trackEvent('HOMEWORK', 'formulaire ouvert');
-}
-
-function closeHomework() {
-  document.getElementById('homework-overlay').classList.remove('show');
-}
-
-function submitHomework() {
-  var theme = document.getElementById('hw-theme').value.trim();
-  var arg1 = document.getElementById('hw-arg1').value.trim();
-  var arg2 = document.getElementById('hw-arg2').value.trim();
-  var arg3 = document.getElementById('hw-arg3').value.trim();
-  var errEl = document.getElementById('hw-error');
-  var okEl = document.getElementById('hw-success');
-
-  if (!theme || !arg1 || !arg2 || !arg3) {
-    errEl.style.display = 'block';
-    okEl.style.display = 'none';
-    return;
-  }
-  errEl.style.display = 'none';
-
-  var timeSpent = Math.round((Date.now() - hwOpenTime) / 1000);
-
-  // Envoyer au Google Sheet
-  try {
-    var p = '?type=homework'
-      + '&nom=' + encodeURIComponent(studentData.nom)
-      + '&prenom=' + encodeURIComponent(studentData.prenom)
-      + '&classe=' + encodeURIComponent(studentData.classe)
-      + '&theme=' + encodeURIComponent(theme)
-      + '&arg1=' + encodeURIComponent(arg1)
-      + '&arg2=' + encodeURIComponent(arg2)
-      + '&arg3=' + encodeURIComponent(arg3)
-      + '&timeSpent=' + timeSpent
-      + '&pasteCount=' + hwPasteCount
-      + '&charsTyped=' + hwCharsTyped
-      + '&charsPasted=' + hwCharsPasted
-      + '&_=' + Date.now();
-    new Image().src = TRACKING_URL + p;
-  } catch(e) {}
-
-  okEl.style.display = 'block';
-  trackEvent('HOMEWORK', 'envoyé — ' + timeSpent + 's — collages:' + hwPasteCount);
-  homeworkSubmitted = true;
-
-  // Désactiver le formulaire
-  document.querySelectorAll('#homework-box textarea').forEach(function(t) { t.disabled = true; });
-  document.querySelector('#homework-box button').disabled = true;
-
-  // Mettre à jour le bouton flottant
-  var hwBtn = document.getElementById('homework-btn');
-  hwBtn.textContent = '✓ Travail envoyé';
-  hwBtn.classList.add('done');
-}
-
-// Détection paste vs frappe sur les textareas du homework
-document.querySelectorAll('#homework-box textarea').forEach(function(ta) {
-  ta.addEventListener('input', function(e) {
-    if (e.inputType && e.inputType !== 'insertFromPaste') {
-      hwCharsTyped += (e.data ? e.data.length : 1);
-    }
-  });
-  ta.addEventListener('paste', function(e) {
-    hwPasteCount++;
-    var pasted = (e.clipboardData || window.clipboardData);
-    if (pasted) {
-      var text = pasted.getData('text');
-      hwCharsPasted += text.length;
-    }
-    trackEvent('HOMEWORK_PASTE', 'collage #' + hwPasteCount);
-  });
-});
 
 // --- VIDEO TRACKING ---
 document.querySelectorAll('video').forEach(function(v, i) {
@@ -4116,7 +3950,7 @@ var siteOpenTime = Date.now();
 window.addEventListener('beforeunload', function(e) {
   if (!studentData.nom) return;
   var totalTime = Math.round((Date.now() - siteOpenTime) / 1000);
-  var detail = totalTime + 's sur le site' + (homeworkSubmitted ? ' — travail envoyé' : ' — TRAVAIL NON ENVOYÉ');
+  var detail = totalTime + 's sur le site';
   // Double envoi pour fiabilité
   try {
     var p = '?type=log&nom=' + encodeURIComponent(studentData.nom)
@@ -4126,11 +3960,7 @@ window.addEventListener('beforeunload', function(e) {
       + '&_=' + Date.now();
     new Image().src = TRACKING_URL + p;
   } catch(ex) {}
-  // Bloquer la fermeture si le travail n'est pas envoyé
-  if (!homeworkSubmitted && studentData.nom) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
+
 });
 
 // =====================================================
@@ -4186,13 +4016,7 @@ function sendPDFByEmail(nom, prenom, classe, sujet, mots, filename) {
   tryFetch();
 }
 
-// ── Raccourci prof : Ctrl+Espace → évaluation directe ──
-document.addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.code === 'Space') {
-    e.preventDefault();
-    showEval();
-  }
-});
+
 
 </script>
 
